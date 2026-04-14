@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한강 쟁탈전 타임라인</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f5f3ef;padding:1rem;}
+
+.hero{position:relative;width:100%;height:180px;overflow:hidden;border-radius:14px;margin-bottom:1.2rem;}
+.hero img{width:100%;height:100%;object-fit:cover;object-position:center 40%;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.6));display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:1rem;}
+.hero h1{color:#fff;font-size:20px;font-weight:700;text-align:center;}
+.hero p{color:rgba(255,255,255,0.85);font-size:12px;margin-top:4px;text-align:center;}
+
+.period-row{display:grid;grid-template-columns:60px repeat(4,1fr);gap:5px;margin-bottom:5px;}
+.period-hd{text-align:center;padding:6px 3px;border-radius:8px;background:#fff;border:0.5px solid #ddd;}
+.period-hd .pt{font-size:11px;font-weight:600;color:#333;}
+.period-hd .ps{font-size:10px;color:#999;display:block;margin-top:1px;}
+.p0{border-top:3px solid #888!important;}
+.p1{border-top:3px solid #e09000!important;}
+.p2{border-top:3px solid #2277cc!important;}
+.p3{border-top:3px solid #1a9060!important;}
+
+.grid{display:grid;grid-template-columns:60px repeat(4,1fr);gap:5px;}
+.clabel{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:8px;color:#555;background:#fff;border:0.5px solid #ddd;min-height:72px;text-align:center;padding:4px;}
+
+.cell{min-height:72px;border-radius:8px;border:1.5px dashed #ccc;padding:5px;display:flex;flex-direction:column;gap:3px;transition:border-color 0.15s,background 0.1s;background:#fafaf8;}
+.cell.over{border-color:#2277cc;background:#eaf3fb;}
+.cell.correct{border-color:#1a9060!important;border-style:solid!important;background:#e8f7f1!important;}
+.cell.wrong{border-color:#cc3333!important;border-style:solid!important;background:#fdf0f0!important;}
+
+.pcard{font-size:11px;padding:4px 7px;border-radius:5px;cursor:grab;line-height:1.4;font-weight:500;background:#fff;color:#333;border:0.5px solid #ccc;user-select:none;}
+.pcard.c-goguryeo{background:#b5d4f4;color:#0c447c;border-color:#85b7eb;}
+.pcard.c-baekje{background:#fac775;color:#633806;border-color:#ef9f27;}
+.pcard.c-silla{background:#9fe1cb;color:#085041;border-color:#5dcaa5;}
+
+.pool-area{margin-top:1rem;padding:1rem;background:#fff;border-radius:12px;border:0.5px solid #ddd;}
+.pool-title{font-size:12px;color:#777;margin-bottom:8px;}
+.pool-grid{display:flex;flex-wrap:wrap;gap:7px;}
+
+.ecard{padding:7px 11px;border-radius:8px;font-size:12px;font-weight:500;cursor:grab;border:0.5px solid #ccc;background:#fff;color:#333;user-select:none;line-height:1.4;transition:opacity 0.15s,transform 0.1s;-webkit-user-select:none;}
+.ecard:active{transform:scale(0.96);cursor:grabbing;}
+.ecard.dragging{opacity:0.35;}
+
+.actions{display:flex;gap:8px;margin-top:1rem;justify-content:flex-end;}
+.btn{font-size:13px;padding:8px 16px;border-radius:8px;border:0.5px solid #ccc;background:#fff;color:#333;cursor:pointer;}
+.btn:hover{background:#f0f0f0;}
+.btn-check{background:#e6f1fb;color:#0c447c;border-color:#85b7eb;}
+
+.scorebar{margin-top:10px;padding:10px 14px;border-radius:8px;background:#f0f0ec;font-size:13px;color:#555;display:none;}
+.scorebar.on{display:block;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="samguk_image.png" alt="삼국의 한강 쟁탈전">
+  <div class="hero-overlay">
+    <h1>한강 쟁탈전 타임라인</h1>
+    <p>사건 카드를 알맞은 나라와 시기에 배치하세요</p>
+  </div>
+</div>
+
+<div class="period-row">
+  <div></div>
+  <div class="period-hd p0"><span class="pt">백제의 반격</span><span class="ps">4세기</span></div>
+  <div class="period-hd p1"><span class="pt">고구려의 남하</span><span class="ps">4~5세기 초</span></div>
+  <div class="period-hd p2"><span class="pt">고구려의 압박</span><span class="ps">5세기</span></div>
+  <div class="period-hd p3"><span class="pt">신라의 약진</span><span class="ps">6세기</span></div>
+</div>
+
+<div class="grid" id="grid">
+  <div class="clabel">고구려</div>
+  <div class="cell" data-c="goguryeo" data-p="0"></div>
+  <div class="cell" data-c="goguryeo" data-p="1"></div>
+  <div class="cell" data-c="goguryeo" data-p="2"></div>
+  <div class="cell" data-c="goguryeo" data-p="3"></div>
+
+  <div class="clabel">백제</div>
+  <div class="cell" data-c="baekje" data-p="0"></div>
+  <div class="cell" data-c="baekje" data-p="1"></div>
+  <div class="cell" data-c="baekje" data-p="2"></div>
+  <div class="cell" data-c="baekje" data-p="3"></div>
+
+  <div class="clabel">신라</div>
+  <div class="cell" data-c="silla" data-p="0"></div>
+  <div class="cell" data-c="silla" data-p="1"></div>
+  <div class="cell" data-c="silla" data-p="2"></div>
+  <div class="cell" data-c="silla" data-p="3"></div>
+</div>
+
+<div class="pool-area">
+  <p class="pool-title">카드를 드래그해서 알맞은 칸에 놓으세요</p>
+  <div class="pool-grid" id="pool"></div>
+</div>
+
+<div class="actions">
+  <button class="btn" id="resetBtn">초기화</button>
+  <button class="btn btn-check" id="checkBtn">정답 확인 →</button>
+</div>
+<div class="scorebar" id="scorebar"></div>
+
+<script>
+const EVS=[
+  {id:'g1',text:'고국원왕, 평양성에서 전사',c:'goguryeo',p:0},
+  {id:'b1',text:'근초고왕, 평양성 공격',c:'baekje',p:0},
+  {id:'g2',text:'광개토대왕, 신라 요청으로 왜 격퇴',c:'goguryeo',p:1},
+  {id:'s2',text:'내물왕, 고구려에 도움 요청·왜 격퇴',c:'silla',p:1},
+  {id:'g3',text:'장수왕, 한성 함락',c:'goguryeo',p:2},
+  {id:'b3a',text:'개로왕 전사, 웅진 천도',c:'baekje',p:2},
+  {id:'s3',text:'눌지왕, 나제동맹 체결',c:'silla',p:2},
+  {id:'g4',text:'귀족들의 왕위 쟁탈전, 고구려 내분',c:'goguryeo',p:3},
+  {id:'b4',text:'성왕, 한강 하류 수복 후 관산성 전사',c:'baekje',p:3},
+  {id:'s4a',text:'진흥왕, 한강 유역 독차지',c:'silla',p:3},
+];
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+let dragId=null,dragFromCell=null,touchClone=null,touchSrc=null;
+
+function placedIds(){return new Set([...document.querySelectorAll('.cell .pcard')].map(el=>el.dataset.id));}
+
+function renderPool(){
+  const pool=document.getElementById('pool');
+  pool.innerHTML='';
+  const placed=placedIds();
+  shuffle(EVS.filter(e=>!placed.has(e.id))).forEach(ev=>{
+    const d=makeEcard(ev);
+    pool.appendChild(d);
+  });
+}
+
+function makeEcard(ev){
+  const d=document.createElement('div');
+  d.className='ecard';d.dataset.id=ev.id;d.textContent=ev.text;d.draggable=true;
+  attachDrag(d,false);attachTouch(d,false);
+  return d;
+}
+
+function makePcard(ev){
+  const d=document.createElement('div');
+  d.className='pcard';d.dataset.id=ev.id;d.textContent=ev.text;d.draggable=true;
+  attachDrag(d,true);attachTouch(d,true);
+  return d;
+}
+
+function returnToPool(id){
+  const ev=EVS.find(e=>e.id===id);
+  const d=makeEcard(ev);
+  document.getElementById('pool').appendChild(d);
+}
+
+function dropOnCell(cell){
+  if(!dragId)return;
+  const ev=EVS.find(e=>e.id===dragId);
+  if(dragFromCell)dragFromCell.innerHTML='';
+  [...cell.querySelectorAll('.pcard')].forEach(el=>{returnToPool(el.dataset.id);el.remove();});
+  cell.appendChild(makePcard(ev));
+  cell.classList.remove('correct','wrong');
+  document.getElementById('scorebar').classList.remove('on');
+  renderPool();
+}
+
+function attachDrag(el,fromCell){
+  el.addEventListener('dragstart',e=>{
+    dragId=el.dataset.id;dragFromCell=fromCell?el.closest('.cell'):null;
+    el.classList.add('dragging');e.dataTransfer.effectAllowed='move';
+  });
+  el.addEventListener('dragend',()=>{el.classList.remove('dragging');dragId=null;dragFromCell=null;});
+}
+
+function attachTouch(el,fromCell){
+  el.addEventListener('touchstart',e=>{
+    const ev=EVS.find(ev=>ev.id===el.dataset.id);
+    dragId=ev.id;dragFromCell=fromCell?el.closest('.cell'):null;
+    touchSrc=el;el.classList.add('dragging');
+    const t=e.touches[0];
+    touchClone=el.cloneNode(true);
+    Object.assign(touchClone.style,{
+      position:'fixed',pointerEvents:'none',zIndex:'9999',opacity:'0.9',
+      fontSize:'12px',padding:'7px 11px',borderRadius:'8px',
+      background:'#fff',border:'1px solid #aaa',color:'#333',
+      fontFamily:'inherit',whiteSpace:'nowrap',
+      transform:'translate(-50%,-50%)',
+      left:t.clientX+'px',top:t.clientY+'px'
+    });
+    document.body.appendChild(touchClone);
+  },{passive:true});
+
+  el.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    const t=e.touches[0];
+    if(touchClone){touchClone.style.left=t.clientX+'px';touchClone.style.top=t.clientY+'px';}
+    document.querySelectorAll('.cell').forEach(c=>c.classList.remove('over'));
+    const under=document.elementFromPoint(t.clientX,t.clientY);
+    const cell=under?.closest('.cell');
+    if(cell)cell.classList.add('over');
+  },{passive:false});
+
+  el.addEventListener('touchend',e=>{
+    if(touchClone){touchClone.remove();touchClone=null;}
+    if(touchSrc)touchSrc.classList.remove('dragging');
+    document.querySelectorAll('.cell').forEach(c=>c.classList.remove('over'));
+    const t=e.changedTouches[0];
+    const under=document.elementFromPoint(t.clientX,t.clientY);
+    const cell=under?.closest('.cell');
+    if(cell){dropOnCell(cell);}
+    else if(dragFromCell){dragFromCell.innerHTML='';dragFromCell.classList.remove('correct','wrong');renderPool();}
+    dragId=null;dragFromCell=null;touchSrc=null;
+  },{passive:true});
+}
+
+function setupCells(){
+  document.querySelectorAll('.cell').forEach(cell=>{
+    cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('over');});
+    cell.addEventListener('dragleave',()=>cell.classList.remove('over'));
+    cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('over');dropOnCell(cell);});
+  });
+  const pool=document.getElementById('pool');
+  pool.addEventListener('dragover',e=>e.preventDefault());
+  pool.addEventListener('drop',e=>{
+    e.preventDefault();
+    if(!dragId||!dragFromCell)return;
+    dragFromCell.innerHTML='';dragFromCell.classList.remove('correct','wrong');renderPool();
+  });
+}
+
+document.getElementById('checkBtn').addEventListener('click',()=>{
+  let correct=0,total=0;
+  document.querySelectorAll('.cell').forEach(cell=>{
+    const cards=[...cell.querySelectorAll('.pcard')];
+    if(!cards.length)return;
+    let allRight=true;
+    cards.forEach(card=>{
+      total++;
+      const ev=EVS.find(e=>e.id===card.dataset.id);
+      if(ev.c===cell.dataset.c&&ev.p===parseInt(cell.dataset.p)){correct++;card.classList.add('c-'+ev.c);}
+      else{allRight=false;}
+    });
+    cell.classList.remove('correct','wrong');
+    cell.classList.add(allRight?'correct':'wrong');
+  });
+  const bar=document.getElementById('scorebar');
+  bar.textContent=total===0?'카드를 먼저 배치해보세요!':`${total}개 중 ${correct}개 정확해요. ${correct===total?'모두 맞았어요! 🎉':'틀린 칸을 다시 확인해보세요.'}`;
+  bar.classList.add('on');
+});
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  document.querySelectorAll('.cell').forEach(c=>{c.innerHTML='';c.classList.remove('correct','wrong');});
+  document.getElementById('scorebar').classList.remove('on');
+  renderPool();
+});
+
+renderPool();setupCells();
+</script>
+</body>
+</html>
