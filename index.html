@@ -24,7 +24,10 @@ body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f5f
 .p3{border-top:3px solid #1a9060!important;}
 
 .grid{display:grid;grid-template-columns:60px repeat(4,1fr);gap:5px;}
-.clabel{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:8px;color:#555;background:#fff;border:0.5px solid #ddd;min-height:72px;text-align:center;padding:4px;}
+.clabel{display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border-radius:8px;min-height:72px;text-align:center;padding:4px;background-size:cover;background-position:center;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.8),0 0 8px rgba(0,0,0,0.6);border:none;}
+.clabel-goguryeo{background-image:url('goguryeo_bg.png');}
+.clabel-baekje{background-image:url('baekje_bg.png');}
+.clabel-silla{background-image:url('silla_bg.png');}
 
 .cell{min-height:72px;border-radius:8px;border:1.5px dashed #ccc;padding:5px;display:flex;flex-direction:column;gap:3px;transition:border-color 0.15s,background 0.1s;background:#fafaf8;}
 .cell.over{border-color:#2277cc;background:#eaf3fb;}
@@ -72,19 +75,19 @@ body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f5f
 </div>
 
 <div class="grid" id="grid">
-  <div class="clabel">고구려</div>
+  <div class="clabel clabel-goguryeo">고구려</div>
   <div class="cell" data-c="goguryeo" data-p="0"></div>
   <div class="cell" data-c="goguryeo" data-p="1"></div>
   <div class="cell" data-c="goguryeo" data-p="2"></div>
   <div class="cell" data-c="goguryeo" data-p="3"></div>
 
-  <div class="clabel">백제</div>
+  <div class="clabel clabel-baekje">백제</div>
   <div class="cell" data-c="baekje" data-p="0"></div>
   <div class="cell" data-c="baekje" data-p="1"></div>
   <div class="cell" data-c="baekje" data-p="2"></div>
   <div class="cell" data-c="baekje" data-p="3"></div>
 
-  <div class="clabel">신라</div>
+  <div class="clabel clabel-silla">신라</div>
   <div class="cell" data-c="silla" data-p="0"></div>
   <div class="cell" data-c="silla" data-p="1"></div>
   <div class="cell" data-c="silla" data-p="2"></div>
